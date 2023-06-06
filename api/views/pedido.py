@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 from api.models import Pedido
 from api.serializers.pedido import (
-    ItensSerializerDetalhado,
+    ItensSerializerDetailed,
     PedidoSerializer,
     PedidoSerializerOutput,
 )
@@ -36,5 +36,5 @@ class PedidoUserView(RetrieveAPIView):
                 data={"detail": "Sem autorização para acessar o pedido"},
                 status=status.HTTP_403_FORBIDDEN,
             )
-        data = ItensSerializerDetalhado(instance=pedido.items.all(), many=True)
+        data = ItensSerializerDetailed(instance=pedido.items.all(), many=True)
         return Response(data=data.data, status=status.HTTP_200_OK)

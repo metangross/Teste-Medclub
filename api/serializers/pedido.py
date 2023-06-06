@@ -14,7 +14,7 @@ class ItensSerializer(serializers.ModelSerializer):
         fields = ["item", "quant"]
 
 
-class ItensSerializerDetalhado(serializers.ModelSerializer):
+class ItensSerializerDetailed(serializers.ModelSerializer):
     item = ItemSerializerOutput()
 
     class Meta:
