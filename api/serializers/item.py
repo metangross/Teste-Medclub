@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
 
-from api.models import User, Item, Pedido
+from api.models import Item, Pedido, User
+
 
 class ItemSerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,3 +10,7 @@ class ItemSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class ItemSerializerOutput(ItemSerializer):
+    class Meta:
+        model = Item
+        exclude = ["id"]
