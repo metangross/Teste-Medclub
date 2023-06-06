@@ -62,3 +62,18 @@ class PedidoViewSetTest(APITestCase):
         self.assertEqual(items[0]["quant"], 10)
         self.assertEqual(items[1]["item"], item2.id)
         self.assertEqual(items[1]["quant"], 5)
+
+    def test_pedido_no_auth(self):
+        self.client.logout()
+        resp = self.client.get(self.pedido_url)
+        self.assertTrue(status.is_client_error(resp.status_code))
+        self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        item = ItemFactory()
+        item2 = ItemFactory()
+        data = {
+            "items": [{"item": item.pk, "quant": 10}, {"item": item2.pk, "quant": 5}]
+        }
+        resp = self.client.post(self.pedido_url, data, format="json")
+        self.assertTrue(status.is_client_error(resp.status_code))
+        self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)

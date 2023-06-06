@@ -85,3 +85,37 @@ class ItemViewSetTest(APITestCase):
         resp = self.client.patch(item_patch_url, data=patch, format="json")
         self.assertTrue(status.is_client_error(resp.status_code))
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_delete_item(self):
+        item = ItemFactory()
+        item_detail_url = reverse("item-view", kwargs={"pk": item.pk})
+        resp = self.client.delete(item_detail_url)
+        self.assertTrue(status.is_success(resp.status_code))
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+        quant = len(Item.objects.all())
+        self.assertEqual(quant, 0)
+
+    def test_item_no_auth(self):
+        item = ItemFactory()
+        item_detail_url = reverse("item-view", kwargs={"pk": item.pk})
+        self.client.logout()
+        resp = self.client.get(item_detail_url)
+        self.assertTrue(status.is_client_error(resp.status_code))
+        self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        resp = self.client.post(self.item_list_url, self.data, format="json")
+        self.assertTrue(status.is_client_error(resp.status_code))
+        self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        item = ItemFactory(nome="teste", preco=35.1)
+        patch = {"nome": "novoteste", "preco": 11.1}
+        item_patch_url = reverse("item-view", kwargs={"pk": item.pk})
+        resp = self.client.patch(item_patch_url, data=patch, format="json")
+        self.assertTrue(status.is_client_error(resp.status_code))
+        self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        item = ItemFactory()
+        item_detail_url = reverse("item-view", kwargs={"pk": item.pk})
+        resp = self.client.delete(item_detail_url)
+        self.assertTrue(status.is_client_error(resp.status_code))
+        self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)

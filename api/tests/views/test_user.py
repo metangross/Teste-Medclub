@@ -70,3 +70,14 @@ class UserViewSetTest(APITestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.json()
         self.assertEqual("Login realizado com sucesso.", data["message"])
+
+    def test_user_no_auth(self):
+        self.client.logout()
+        resp = self.client.get(self.user_url)
+        self.assertTrue(status.is_client_error(resp.status_code))
+        self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        patch = {"username": "novoteste"}
+        resp = self.client.patch(self.user_url, data=patch, format="json")
+        self.assertTrue(status.is_client_error(resp.status_code))
+        self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
